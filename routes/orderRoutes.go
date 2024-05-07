@@ -12,7 +12,7 @@ func OrderRoutes(incomingRoutes *gin.Engine) {
 	groupRoutes.POST("/add", controllers.CreateOrder())
 	groupRoutes.GET("/:order_id", controllers.GetOrderById())
 	groupRoutes.GET("", controllers.GetOrders())
-	groupRoutes.PATCH("/:order_id", controllers.UpdateOrder())
+	groupRoutes.PUT("/update", controllers.UpdateOrder())
 	//groupRoutes.DELETE()
 
 }
