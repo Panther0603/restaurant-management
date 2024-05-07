@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"restraument-management/custom"
 	"restraument-management/database"
+	"restraument-management/helper"
 	"restraument-management/models"
 	"time"
 
@@ -20,14 +21,14 @@ import (
 
 var MenuCollection *mongo.Collection = database.OpenCollection(database.Client, "menu")
 
-var v *validator.Validate = validator.New()
+var V *validator.Validate = validator.New()
 
 func CreateMenu() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cacel := context.WithTimeout(context.Background(), 100*time.Second)
 		defer cacel()
 
-		v = validator.New()
+		V = validator.New()
 
 		var menu models.Menu
 		err := c.BindJSON(&menu)
@@ -38,11 +39,12 @@ func CreateMenu() gin.HandlerFunc {
 
 		menu.Id = primitive.NewObjectID()
 		menu.Menu_Uid = uuid.NewString()
-		menu.Created_at = time.Now()
-		menu.Updated_at = time.Now()
+		menu.Created_at = helper.GetCurentTime()
+		menu.Updated_at = helper.GetCurentTime()
 
-		err = v.Struct(menu)
-		if err != nil && ErrorAbort(c, http.StatusBadRequest, custom.CMissingReqField) {
+		err = V.Struct(menu)
+		if err != nil {
+			ErrorAbort(c, http.StatusBadRequest, custom.CMissingReqField)
 			return
 		}
 

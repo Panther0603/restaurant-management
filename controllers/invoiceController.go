@@ -4,10 +4,11 @@ import (
 	"net/http"
 	"restraument-management/custom"
 	"restraument-management/database"
+	"restraument-management/helper"
 	"restraument-management/models"
-	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -29,9 +30,10 @@ func CreateInvoice() gin.HandlerFunc {
 
 		invoice.Id = primitive.NewObjectID()
 		invoice.Invoice_uid = uuid.NewString()
-		invoice.Created_at = time.Now()
-		invoice.Upadated_At = time.Now()
-		err = v.Struct(invoice)
+		invoice.Created_at = helper.GetCurentTime()
+		invoice.Upadated_At = helper.GetCurentTime()
+		V = validator.New()
+		err = V.Struct(invoice)
 
 		if err != nil && ErrorAbort(c, http.StatusBadRequest, custom.CMissingReqField) {
 			return
